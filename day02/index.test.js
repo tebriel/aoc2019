@@ -14,7 +14,10 @@ describe('Tests the OpCode Processor', () => {
         [2, 0, 0, 0, 99]
       ]
     ])('.add(%j, %i)', (codes, opIdx, expected) => {
-      expect(add(codes, opIdx)).toStrictEqual(expected);
+      expect(add(codes, opIdx)).toStrictEqual({
+        codeIdx: opIdx + 4,
+        codes: expected
+      });
     });
   });
 
@@ -36,7 +39,10 @@ describe('Tests the OpCode Processor', () => {
         [2, 4, 4, 5, 99, 9801]
       ]
     ])('.multiply(%j, %i)', (codes, opIdx, expected) => {
-      expect(multiply(codes, opIdx)).toStrictEqual(expected);
+      expect(multiply(codes, opIdx)).toStrictEqual({
+        codeIdx: opIdx + 4,
+        codes: expected
+      });
     });
   });
 

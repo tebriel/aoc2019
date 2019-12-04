@@ -59,7 +59,7 @@ function iterateOpCodes(opCodes) {
       case 99:
         return codes;
       default:
-        console.error(`Invalid OpCode: ${codes[opIdx]} for ${opIdx} of ${codes}`);
+        process.stderr.write(`Invalid OpCode: ${codes[opIdx]} for ${opIdx} of ${codes}\n`);
         throw new Error('Invalid OpCode');
     }
   }
@@ -74,6 +74,7 @@ function iterateOpCodes(opCodes) {
  */
 function resetOpCodes(noun, verb) {
   const opCodes = fs.readFileSync(argv.data, 'utf-8').replace('\n', '').split(',');
+  // eslint-disable-next-line no-return-assign
   opCodes.forEach((value, idx) => opCodes[idx] = Number.parseInt(value, 10));
   opCodes[1] = noun;
   opCodes[2] = verb;
@@ -89,10 +90,10 @@ if (require.main === module) {
   process.stdout.write(`Position 0 is: ${result[0]}\n`);
 
   for (let noun = 0; noun <= 99; noun += 1) {
-    for (let verb = 0; verb <= 99; verb +=1) {
+    for (let verb = 0; verb <= 99; verb += 1) {
       result = iterateOpCodes(resetOpCodes(noun, verb));
       if (result[0] === 19690720) {
-        process.stdout.write(`Noun: ${noun}, Verb: ${verb}, Input: ${100 * noun + verb}\n`)
+        process.stdout.write(`Noun: ${noun}, Verb: ${verb}, Input: ${100 * noun + verb}\n`);
       }
     }
   }

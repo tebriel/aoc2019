@@ -87,17 +87,23 @@ function calculateCoordinates(instructions) {
 function findIntersections(first, second) {
   const results = [];
   let found;
-  first.forEach((firstCoord) => {
-    found = second.find((secondCoord) => {
+  let secondIdx;
+  first.forEach((firstCoord, firstIdx) => {
+    found = second.find((secondCoord, foundIdx) => {
       if (firstCoord.x === secondCoord.x && firstCoord.y === secondCoord.y) {
         if (firstCoord.x !== 0 || firstCoord.y !== 0) {
+          secondIdx = foundIdx;
           return true;
         }
       }
       return false;
     });
     if (found != null) {
-      results.push(found);
+      results.push({
+        firstIdx,
+        secondIdx,
+        coords: found
+      });
     }
   });
   return results;
@@ -109,31 +115,38 @@ function findIntersections(first, second) {
  * @param {object} position - The position to calculate distance
  * @returns {number} - The {@link https://en.wikipedia.org/wiki/Taxicab_geometry Manhattan Distance} from the object
  */
-function calculateDistance(position) {
+function calculateManhattanDistance(position) {
   return Math.abs(position.x) + Math.abs(position.y);
 }
 
 /**
- * Find Distance of Closest Intersection
+ * Find Distance of Closest Intersection by Manhattan Distance and Number of Steps
  *
  * @param {string} first - The first set of Instructions
  * @param {string} second - The second set of Instructions
- * @returns {number} - The distance to the closest intersection
+ * @returns {object} - The distance to the closest intersection by manhattan and by steps
  */
 function findDistanceClosestIntersection(first, second) {
   const fCoords = calculateCoordinates(first.split(','));
   const sCoords = calculateCoordinates(second.split(','));
   const intersects = findIntersections(fCoords, sCoords);
-  const distances = [];
+  const manhattan = [];
+  const steps = [];
   intersects.forEach((intersect) => {
-    distances.push(calculateDistance(intersect));
+    manhattan.push(calculateManhattanDistance(intersect.coords));
   });
-  return Math.min(...distances);
+
+  intersects.forEach((intersect) => {
+    steps.push(intersect.firstIdx + intersect.secondIdx);
+  });
+  return {
+    manhattan: Math.min(...manhattan),
+    steps: Math.min(...steps)
+  };
 }
 
 module.exports = {
   calculateCoordinates,
-  calculateDistance,
   findDistanceClosestIntersection,
   findIntersections,
   moveX,
@@ -143,5 +156,6 @@ module.exports = {
 if (require.main === module) {
   const paths = fs.readFileSync(argv.data, 'utf-8').split('\n');
   const result = findDistanceClosestIntersection(paths[0], paths[1]);
-  process.stdout.write(`Manhattan Distance: ${result}\n`);
+  process.stdout.write(`Manhattan Distance: ${result.manhattan}\n`);
+  process.stdout.write(`Steps Distance: ${result.steps}\n`);
 }

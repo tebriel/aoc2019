@@ -7,9 +7,13 @@ const {
 
 describe('Test Code Validation', () => {
   test.each([
-    [111111, true],
+    [111111, false],
     [223450, false],
-    [123789, false]
+    [123789, false],
+    [112233, true],
+    [123444, false],
+    [111122, true],
+    [223444, true]
   ])('.isValidCode(%i)', (code, expected) => {
     const codeArray = arrayFromString(code.toString());
     expect(isValidCode(codeArray)).toBe(expected);

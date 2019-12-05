@@ -26,13 +26,19 @@ function isValidCode(code) {
 
   // At least 2 digits repeating
   let hasDupes = false;
+  let dupeCount = 1;
   for (let idx = 1; idx < code.length; idx += 1) {
     if (code[idx] === code[idx - 1]) {
+      dupeCount += 1;
       hasDupes = true;
+    } else if (dupeCount === 2) {
+      // We finished a set of only 2 digits that were dupes, so we're good.
       break;
+    } else {
+      dupeCount = 1;
     }
   }
-  if (!hasDupes) {
+  if (!hasDupes || dupeCount !== 2) {
     return false;
   }
 

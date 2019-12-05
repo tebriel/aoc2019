@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-for dir in $(find . -type d -name "day*"); do
+for dir in $(find . -type d -name "day*" | sort -r); do
   echo "---Running for ${dir}---"
   pushd "${dir}"
   npm ci

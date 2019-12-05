@@ -1,8 +1,7 @@
 {
-  "name": "day01",
+  "name": "aoc2019",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Advent of Code 2019 Solutions",
   "scripts": {
     "test": "jest --color",
     "lint": "eslint ."
@@ -19,5 +18,11 @@
     "eslint-plugin-jsdoc": "^16.1.1",
     "eslint-plugin-no-only-tests": "^2.3.1",
     "jest": "^24.9.0"
+  },
+  "jest": {
+    "testPathIgnorePatterns": [
+      "<rootDir>/node_modules/",
+      "<rootDir>/templates/"
+    ]
   }
 }

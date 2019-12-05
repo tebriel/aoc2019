@@ -63,8 +63,7 @@ function output(opCodes, codeIdx, mode) {
   const modeItems = createModeArray(mode, 1);
   const codes = opCodes.slice();
   const value = getValue(codes, codeIdx + 1, modeItems[0]);
-  process.stdout.write(`Output: ${value}\n`);
-  return { codes, codeIdx: (codeIdx + 2) };
+  return { codes, codeIdx: (codeIdx + 2), output: value };
 }
 
 /**

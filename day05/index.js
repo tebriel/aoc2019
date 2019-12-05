@@ -15,6 +15,7 @@ const opcodes = require('./lib/opcodes');
 function iterateOpCodes(opCodes, inputVal) {
   let codes = opCodes.slice();
   let result;
+  let outputs = [];
   for (let opIdx = 0; opIdx < codes.length;) {
     let fullCode = codes[opIdx].toString().padStart(2, '0');
     let currentCode = fullCode.slice(fullCode.length - 2);
@@ -39,6 +40,7 @@ function iterateOpCodes(opCodes, inputVal) {
         result = opcodes.output(codes, opIdx, mode);
         opIdx = result.codeIdx;
         codes = result.codes;
+        outputs.push(result.output);
         break;
       case '05':
         result = opcodes.jumpIfTrue(codes, opIdx, mode);
@@ -61,7 +63,10 @@ function iterateOpCodes(opCodes, inputVal) {
         codes = result.codes;
         break;
       case '99':
-        return codes;
+        return {
+          codes,
+          outputs
+        };
       default:
         process.stderr.write(`Invalid OpCode: ${currentCode} for ${opIdx} of ${codes}\n`);
         throw new Error(`Invalid OpCode: ${currentCode}`);
@@ -80,6 +85,6 @@ if (require.main === module) {
   // eslint-disable-next-line no-return-assign
   codes.forEach((value, idx) => codes[idx] = Number.parseInt(value, 10));
   let result = iterateOpCodes(codes, iVal);
-  process.stdout.write(`Result is: ${result}\n`);
-  process.stdout.write(`Position 0 is: ${result[0]}\n`);
+  result.outputs.forEach((output) => process.stdout.write(`Output: ${output}\n`));
+  process.stdout.write(`Position 0 is: ${result.codes[0]}\n`);
 }

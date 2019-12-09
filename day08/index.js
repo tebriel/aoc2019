@@ -34,8 +34,33 @@ function buildLayer(pixels, width, height) {
 function countInstances(instance, layer) {
   let total = 0;
   // eslint-disable-next-line no-return-assign
-  layer.forEach((row) => row.forEach((column) => total += (1 ? column === instance : 0)));
+  layer.forEach((row) => row.forEach((column) => total += (column === instance ? 1 : 0)));
   return total;
+}
+
+/**
+ * Build Final Layer
+ */
+function buildFinalLayer(layers) {
+  let finalLayer = [];
+  layers.forEach((layer) => {
+    if (finalLayer.length === 0) {
+      finalLayer = layer;
+      return;
+    }
+    layer.forEach((row, rowIdx) => {
+      if (finalLayer[row] == null) {
+        finalLayer[row] = Int8Array.from(row);
+      }
+      row.forEach((column, columnIdx) => {
+        const previous = finalLayer[rowIdx][columnIdx];
+        if (previous === 2) {
+          finalLayer[rowIdx][columnIdx] = column;
+        }
+      });
+    });
+  });
+  return finalLayer;
 }
 
 module.exports = { buildLayer, countInstances };
@@ -44,14 +69,27 @@ if (require.main === module) {
   const input = fs.readFileSync(argv.data, 'utf-8').split('\n')[0];
   const layerSize = 25 * 6;
   const layers = [];
-  for (let idx = layerSize; idx < input.length; idx += layerSize) {
+  for (let idx = layerSize; idx <= input.length; idx += layerSize) {
     layers.push(buildLayer(input.slice(idx - layerSize, idx + 1), 25, 6));
   }
 
-  const zerosCount = layers.map((layer) => countInstances(0, layer));
-  const largestCount = Math.min(...zerosCount);
-  const targetLayer = layers[zerosCount.indexOf(largestCount)];
-  const onesCount = countInstances(1, targetLayer);
-  const twosCount = countInstances(2, targetLayer);
-  process.stdout.write(`${onesCount} * ${twosCount} == ${onesCount * twosCount}\n`);
+  // const zerosCount = layers.map((layer) => countInstances(0, layer));
+  // const largestCount = Math.min(...zerosCount);
+  // const targetLayer = layers[zerosCount.indexOf(largestCount)];
+  // const onesCount = countInstances(1, targetLayer);
+  // const twosCount = countInstances(2, targetLayer);
+  // process.stdout.write(`${onesCount} * ${twosCount} == ${onesCount * twosCount}\n`);
+  const finalLayer = buildFinalLayer(layers);
+  finalLayer.forEach((row) => {
+    row.forEach((column) => {
+      let output = '  '; // '🟥';
+      if (column === 0) {
+        output = '⬛';
+      } else if (column === 1) {
+        output = '⬜';
+      }
+      process.stdout.write(output);
+    });
+    process.stdout.write('\n');
+  });
 }
